@@ -1,0 +1,65 @@
+01.00.13: 
+  Fixed: Shunt order issues with Reassign  - AGAIN
+  
+  Released: 
+   		DEV :(11/18/2010 23:00 GMT-3 by Jose)
+   		PROD:(                       by José)
+   		
+01.00.12: 
+  Fixed: Shunt order issues with Reassign 
+  
+  Released: 
+   		DEV :(09/11/2010 13:00 GMT-3 by Jose)
+   		PROD:(                       by José)
+
+
+01.00.11: 
+  Improvement: (Specifications for v03.00.04 --> item 28) Today, when there is an error: ''Sync Channel doesn't exist", user on mobile is getting a generic error when trying to sync. Please change this, to show the following message when this type of error happens 
+			  "Communication channel has been temporary lost, please complete/synchronize again to resolve the problem."
+  
+  Released: 
+   		DEV :(04/02/2010 13:00 GMT-3 by Jose)
+   		PROD:(                       by José)
+
+
+01.00.10: 
+  Improvement: When creating an UPDATE RTMI, the outbound timestamp is null, can we please get the outbound inspection date populated with the current date and time. This date is not really important but is nice to have it for consistency.
+  Improvement: when an UPDATE RTMI is created - populate the outbound Location ID with:
+		a) [ IFNULL() ] Last RTMI inbound location ID for that unit, if NULL then ...
+		b) [ IFNULL() ] Last RTMI outbound location ID for that unit, if NULL then ... 
+		c) Location ID that has DEFAULT_FLAG=Y for the correct cus_id. 
+  Released: 
+   		DEV :(02/23/2010 21:00 GMT-3 by Jose)
+   		PROD:(03/03/2010 22:30 GMT-3 by José)
+
+01.00.09: 
+   Fixed: Tire Conditions being duplicate
+   Released: 
+   		DEV :(02/22/2010 21:45 GMT-3 by Jose)
+   		PROD:(02/22/2010 22:40 GMT-3 by Giovani)
+
+   		
+010000.08: (09/16/2009 22:10 GMT-3)
+   Fixed: Stuck SO on Mobile side, The shunt app was not designed to have the PU and DO buttons being pressed within seconds from each other, doing so would cause sometimes conflicts with the background data transmission.
+          Solution: Now is synchronization to Server in background mode (Do not more: PU button, DO button)
+          
+010000.07: (08/02/2009 12:10 GMT-3)
+   New:  Beta Version, Rental Agreement
+   
+010000.06: (04/04/2009 15:50 CNT)
+   New:  Adjusts for Shunt Order Priority(load from database)
+   
+010000.05: (02/02/2009 19:22 CNT)
+   Fixed:  Datetime bug, was updating mobile with datetime incorrect
+   
+010000.04: (01/28/2009 18:00 CNT) 
+	New: Add log file when an barcode is assigned (Unit) on the Server
+	
+010000.03: (01/08/2009 20:38 CNT) 
+	Fixed: On the YardCheck is showing an Unit that is in transit (with SO do not Dropped)
+	
+010000.02: (12/16/2008 18:55 CNT) 
+	New:   Added messages on the log file
+
+010000.01: (12/12/2008)
+    New:  First version with Internal control

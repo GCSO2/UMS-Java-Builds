@@ -1,0 +1,6 @@
+010000: (02/14/2009 11:45 GMT-5)
+   New: Job specialized in send e-mails (today Shunt Order emails and RTMI e-mails) 
+   
+   Released: 
+   		DEV : (02/25/2010 20:15 GMT-3)
+   		PROD: (03/03/2010 22:30 GMT-3)

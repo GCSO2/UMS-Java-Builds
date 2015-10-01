@@ -1,0 +1,6 @@
+010000: 
+   New: Job specialized in Report schedule 
+ 
+   Released: 
+   		DEV : (06/26/2010 17:10 GMT-3)
+   		PROD: (xx)

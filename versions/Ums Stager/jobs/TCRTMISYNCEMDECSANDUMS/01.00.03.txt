@@ -1,0 +1,24 @@
+01.00.04
+   Bug Fixed: 
+   				 Replace Preferred number by Unit Number of Service 2
+   	Released: 
+   		DEV : (08/23/2010 18:30 GMT-3 by José)
+   		PRD : (08/23/2010 18:30 GMT-3 by José)
+   		
+01.00.03
+   Improvement: 
+   				 Service 2 - Added fuelLevel and employeeNumber
+   	Released: 
+   		DEV : (06/15/2010 18:15 GMT-3 by José)
+   		PRD : (06/16/2010 20:35 GMT-3 by José)
+01.00.02
+   Improvement: 
+   				2.1 - "Service 2 - Added: RTMI Date and Return Date". (http://docs.google.com/a/gcso2.com/Doc?docid=0AWrUokUshCgoZGRyYjd6aGRfNmZqeGs0ZGcy&hl=en)
+    Released: 
+   		DEV : (03/30/2010 18:15 GMT-3 by Jose)
+   		PRD : (xxx)
+01.00.00: 
+   New: Job specialized in Send RTMI to EMDCS 
+   Released: 
+   		DEV : (03/09/2010 22:15 GMT-3 by Jose)
+   		PRD : (03/09/2010 22:15 GMT-3 by Giovani)

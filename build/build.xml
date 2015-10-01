@@ -1,0 +1,986 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<project default="Release_MobileServer" basedir=".">
+
+	<property file="build.properties" />
+
+	<property name="ums.util.workspace" value="${basedir}/../../${ums.util.workspace.path}" />	
+	<property name="ums.stager.workspace" value="${basedir}/../../${ums.stager.workspace.path}" />		
+	<property name="ums.fomobile.workspace" value="${basedir}/../../${ums.fomobile.workspace.path}" />
+	<property name="ums.womobile.workspace" value="${basedir}/../../${ums.womobile.workspace.path}" />		
+	<property name="ums.mobileserver.workspace" value="${basedir}/../../${ums.mobileserver.workspace.path}" />
+	<property name="ums.mobileutil.workspace" value="${basedir}/../../${ums.mobileutil.workspace.path}" />
+	<property name="ums.remoteupdatemobile.workspace" value="${basedir}/../../${ums.mobileutil.workspace.path}" />
+	<property name="ums.remoteupdates.server.workspace" value="${basedir}/../../${ums.remotesupdates.serverapp.workspace.path}" />
+
+	<path id="ums.util.lib.classpath">
+		<fileset dir="${ums.util.workspace}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="ums.util.build.classpath">
+		<fileset dir="${ums.util.workspace}/build">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="ums.mobileserver.lib.classpath">
+		<fileset dir="${ums.mobileserver.workspace}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+
+	<path id="ums.remotesupdates.lib.classpath">
+		<fileset dir="${ums.remoteupdates.server.workspace}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="ums.mobileserver.build.classpath">
+		<fileset dir="${ums.mobileserver.workspace}/build">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="ums.remotesupdates.serverapp.build.classpath">
+		<fileset dir="${ums.remoteupdates.server.workspace}/build">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="ums.stager.build.classpath">
+		<fileset dir="${ums.stager.workspace}/build">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="ums.remoteupdatemobile.build.classpath">
+		<fileset dir="${ums.remoteupdatemobile.workspace}/build">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="ums.remoteupdatemobile.lib.classpath">
+		<fileset dir="${ums.remoteupdatemobile.workspace}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	
+	<path id="ums.mobileutil.build.classpath">
+			<fileset dir="${ums.mobileutil.workspace}/build">
+				<include name="**/*.jar" />
+			</fileset>
+	</path>
+
+	<path id="ums.mobileutil.lib.classpath">
+			<fileset dir="${ums.mobileutil.workspace}/lib">
+				<include name="**/*.jar" />
+			</fileset>
+	 </path>
+
+
+	<target name="create-jar-ums-util">
+		<mkdir dir="${ums.util.workspace}/build/classes" />
+		<delete file="${ums.util.workspace}/build/${ums.util.jarname}" />
+		<javac debug="false" deprecation="true" destdir="${ums.util.workspace}/build/classes" srcdir="${ums.util.workspace}/src">
+			<classpath refid="ums.util.lib.classpath" />
+		</javac>
+		<jar jarfile="${ums.util.workspace}/build/${ums.util.jarname}">
+			<fileset dir="${ums.util.workspace}/build/classes">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${ums.util.workspace}/src">
+				<include name="**/.control" />
+			</fileset>
+		</jar>
+		<delete dir="${ums.util.workspace}/build/classes" />
+	</target>
+
+
+
+	<target name="create-jar-ums-server" depends="create-jar-ums-util">
+		<mkdir dir="${ums.mobileserver.workspace}/build/classes_inter" />
+		<mkdir dir="${ums.mobileserver.workspace}/build/classes_impl" />
+
+		<delete file="${ums.mobileserver.workspace}/build/${ums.mobileserver.jarname.interface}" />
+		<delete file="${ums.mobileserver.workspace}/build/${ums.mobileserver.jarname.impl}" />
+
+		<javac debug="true" deprecation="true" destdir="${ums.mobileserver.workspace}/build/classes_inter" srcdir="${ums.mobileserver.workspace}/inter">
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.util.build.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.mobileserver.workspace}/build/${ums.mobileserver.jarname.interface}">
+			<fileset dir="${ums.mobileserver.workspace}/build/classes_inter">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+
+		<javac debug="true" deprecation="true" destdir="${ums.mobileserver.workspace}/build/classes_impl" srcdir="${ums.mobileserver.workspace}/impl">
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.util.build.classpath" />
+			<classpath refid="ums.mobileserver.lib.classpath" />
+			<classpath path="${ums.mobileserver.workspace}/build/${ums.mobileserver.jarname.interface}" />
+		</javac>
+
+
+		<jar jarfile="${ums.mobileserver.workspace}/build/${ums.mobileserver.jarname.impl}">
+			<fileset dir="${ums.mobileserver.workspace}/build/classes_impl">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${ums.mobileserver.workspace}/impl">
+				<include name="**/.control" />
+			</fileset>
+		</jar>
+
+		<delete dir="${ums.mobileserver.workspace}/build/classes_inter" />
+		<delete dir="${ums.mobileserver.workspace}/build/classes_impl" />
+	</target>
+
+
+
+
+	<target name="create-jar-remoteupdates.server" depends="create-jar-ums-util">
+		<mkdir dir="${ums.remoteupdates.server.workspace}/build/classes_inter" />
+		<mkdir dir="${ums.remoteupdates.server.workspace}/build/classes_impl" />
+		<mkdir dir="${ums.remoteupdates.server.workspace}/build/classes_shared" />
+
+		<delete file="${ums.remoteupdates.server.workspace}/build/${ums.remotesupdates.serverapp.jarname.interface}" />
+		<delete file="${ums.remoteupdates.server.workspace}/build/${ums.remotesupdates.serverapp.jarname.impl}" />
+		<delete file="${ums.remoteupdates.server.workspace}/build/${ums.remotesupdates.serverapp.jarname.shared}" />
+
+		<!-- Interfaces -->
+		<javac debug="true" deprecation="true" destdir="${ums.remoteupdates.server.workspace}/build/classes_inter" srcdir="${ums.remoteupdates.server.workspace}/inter">
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.util.build.classpath" />
+		</javac>
+		<jar jarfile="${ums.remoteupdates.server.workspace}/build/${ums.remotesupdates.serverapp.jarname.interface}">
+			<fileset dir="${ums.remoteupdates.server.workspace}/build/classes_inter">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+
+		<!-- Shared classes -->
+		<javac debug="true" deprecation="true" destdir="${ums.remoteupdates.server.workspace}/build/classes_shared" srcdir="${ums.remoteupdates.server.workspace}/shared">
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.util.build.classpath" />
+			<classpath refid="ums.remotesupdates.lib.classpath" />
+			<classpath path="${ums.remoteupdates.server.workspace}/build/${ums.remotesupdates.serverapp.jarname.interface}" />
+			<classpath path="${ums.remoteupdates.server.workspace}/build/${ums.remotesupdates.serverapp.jarname.shared}" />
+		</javac>
+		<jar jarfile="${ums.remoteupdates.server.workspace}/build/${ums.remotesupdates.serverapp.jarname.shared}">
+			<fileset dir="${ums.remoteupdates.server.workspace}/build/classes_shared">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${ums.remoteupdates.server.workspace}/shared">
+				<include name="**/.control" />
+			</fileset>
+		</jar>
+
+
+		<!-- Implementations -->
+		<javac debug="true" deprecation="true" destdir="${ums.remoteupdates.server.workspace}/build/classes_impl" srcdir="${ums.remoteupdates.server.workspace}/impl">
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.util.build.classpath" />
+			<classpath refid="ums.remotesupdates.lib.classpath" />
+			<classpath path="${ums.remoteupdates.server.workspace}/build/${ums.remotesupdates.serverapp.jarname.shared}" />
+			<classpath path="${ums.remoteupdates.server.workspace}/build/${ums.remotesupdates.serverapp.jarname.interface}" />
+		</javac>
+		<jar jarfile="${ums.remoteupdates.server.workspace}/build/${ums.remotesupdates.serverapp.jarname.impl}">
+			<fileset dir="${ums.remoteupdates.server.workspace}/build/classes_impl">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${ums.remoteupdates.server.workspace}/impl">
+				<include name="**/.control" />
+			</fileset>
+		</jar>
+
+		<delete dir="${ums.remoteupdates.server.workspace}/build/classes_inter" />
+		<delete dir="${ums.remoteupdates.server.workspace}/build/classes_impl" />
+		<delete dir="${ums.remoteupdates.server.workspace}/build/classes_shared" />
+	</target>
+
+
+
+	<target name="Release_MobileServer" depends="create-jar-ums-server">
+		<delete file="${ums.mobileserver.release}/${ums.mobileserver.version}/lib/${ums.mobileserver.jarname.interface}" />
+		<delete file="${ums.mobileserver.release}/${ums.mobileserver.version}/lib/${ums.mobileserver.jarname.impl}" />
+		<delete file="${ums.mobileserver.release}/${ums.mobileserver.version}/lib/${ums.util.jarname}" />
+
+		<mkdir dir="${ums.mobileserver.release}/${ums.mobileserver.version}/lib" />
+		<copy todir="${ums.mobileserver.release}/${ums.mobileserver.version}/lib">
+			<fileset dir="${ums.mobileserver.workspace}/build" defaultexcludes="true">
+				<include name="${ums.mobileserver.jarname.interface}" />
+				<include name="${ums.mobileserver.jarname.impl}" />
+			</fileset>
+			<fileset dir="${ums.util.workspace}/build" defaultexcludes="true">
+				<include name="${ums.util.jarname}" />
+			</fileset>
+		</copy>
+	</target>
+
+
+
+
+	<target name="Release_RemoteUpdatesServer" depends="create-jar-remoteupdates.server">
+		<delete file="${ums.remotesupdates.serverapp.release}/${ums.remotesupdates.serverapp.version}/lib/${ums.remotesupdates.serverapp.jarname.interface}" />
+		<delete file="${ums.remotesupdates.serverapp.release}/${ums.remotesupdates.serverapp.version}/lib/${ums.remotesupdates.serverapp.jarname.impl}" />
+		<delete file="${ums.remotesupdates.serverapp.release}/${ums.remotesupdates.serverapp.version}/lib/${ums.remotesupdates.serverapp.jarname.shared}" />
+		<delete file="${ums.remotesupdates.serverapp.release}/${ums.remotesupdates.serverapp.version}/lib/${ums.util.jarname}" />
+
+		<mkdir dir="${ums.remotesupdates.serverapp.release}/${ums.remotesupdates.serverapp.version}/lib" />
+		<copy todir="${ums.remotesupdates.serverapp.release}/${ums.remotesupdates.serverapp.version}/lib">
+			<fileset dir="${ums.remoteupdates.server.workspace}/build" defaultexcludes="true">
+
+			</fileset>
+			<fileset dir="${ums.util.workspace}/build" defaultexcludes="true">
+				<include name="${ums.util.jarname}" />
+			</fileset>
+		</copy>
+	</target>
+
+
+	
+	<target name="Release_MobileInstaller">
+			<mkdir dir="${ums.remoteupdatemobile.workspace}/build/classesupdates" />
+			
+		  	
+		
+			<delete includeEmptyDirs="true">
+					<fileset dir="${ums.remoteupdatemobile.workspace}/build/classesupdates">
+						<include name="**/*" />
+					</fileset>
+			</delete>
+
+			<javac debug="false" deprecation="true" destdir="${ums.remoteupdatemobile.workspace}/build/classesupdates" srcdir="${ums.util.workspace}/src">
+					<classpath refid="ums.util.lib.classpath" />
+			</javac>
+		
+		
+			<javac debug="true" deprecation="true" destdir="${ums.remoteupdatemobile.workspace}/build/classesupdates" srcdir="${ums.mobileutil.workspace}/src">
+						<classpath refid="ums.util.lib.classpath" />
+						<classpath refid="ums.util.build.classpath" />						
+						<classpath refid="ums.mobileserver.build.classpath" />
+						<classpath refid="ums.mobileutil.build.classpath" />
+						<classpath refid="ums.mobileutil.lib.classpath" />
+						<classpath refid="ums.remotesupdates.serverapp.build.classpath" />
+			</javac>
+			
+		
+			<javac debug="true" deprecation="true" destdir="${ums.remoteupdatemobile.workspace}/build/classesupdates" srcdir="${ums.remoteupdates.server.workspace}/inter">
+				<classpath refid="ums.util.lib.classpath" />
+				<classpath refid="ums.util.build.classpath" />
+			</javac>
+			
+
+			<!-- Shared classes -->
+			<javac debug="true" deprecation="true" destdir="${ums.remoteupdatemobile.workspace}/build/classesupdates" srcdir="${ums.remoteupdates.server.workspace}/shared">
+				<classpath refid="ums.util.lib.classpath" />
+				<classpath refid="ums.util.build.classpath" />
+				<classpath refid="ums.remotesupdates.lib.classpath" />
+				<classpath path="${ums.remoteupdates.server.workspace}/build/${ums.remotesupdates.serverapp.jarname.interface}" />
+				<classpath path="${ums.remoteupdates.server.workspace}/build/${ums.remotesupdates.serverapp.jarname.shared}" />
+			</javac>
+		
+			<copy todir="${ums.remoteupdatemobile.workspace}/build/classesupdates">
+					<fileset dir="${ums.mobileutil.workspace}/classes" defaultexcludes="true">
+						
+					</fileset>
+			</copy>
+		
+			<copy todir="${ums.remoteupdatemobile.workspace}/build/classesupdates/properties">
+					<fileset dir="${ums.mobileutil.workspace}/properties" defaultexcludes="true">
+						<include name="*.*" />
+					</fileset>
+			</copy>
+		
+		
+		   <jar jarfile="${ums.remoteupdatemobile.workspace}/build/${ums.remoteupdatemobile.jarname}">
+					<manifest>
+						<attribute name="Main-Class" value="${ums.remoteupdatemobile.manifest.mainclass}" />
+					</manifest>
+
+					<fileset dir="${ums.remoteupdatemobile.workspace}/build/classesupdates">
+						<include name="**/*.class" />
+					</fileset>
+					<fileset dir="${ums.remoteupdatemobile.workspace}/build/classesupdates">
+						<include name="**/*" />
+					</fileset>
+			</jar>
+			
+		
+			<copy todir="${ums.remoteupdatemobile.release}/${ums.remoteupdatemobile.version}">
+					<fileset dir="${ums.remoteupdatemobile.workspace}/build" defaultexcludes="true">
+						<include name="*RemoteUpdateMobile.jar" />
+					</fileset>
+			</copy>
+
+		
+			<!-- Todo...-->
+			
+	</target>
+
+
+	<target name="create-jar-ums-mobileutil">
+		<mkdir dir="${ums.mobileutil.workspace}/build/classes" />
+		<mkdir dir="${ums.mobileutil.workspace}/build/classesboot" />
+		
+		<delete includeEmptyDirs="true">
+				<fileset dir="${ums.mobileutil.workspace}/build/classes">
+					<include name="**/*.jar" />
+				</fileset>
+		 </delete>
+
+		<javac debug="true" deprecation="true" destdir="${ums.mobileutil.workspace}/build/classesboot" srcdir="${ums.mobileutil.workspace}/srcBootApp">
+		</javac>
+		
+		<jar jarfile="${ums.mobileutil.workspace}/build/${ums.mobileutil.boot.jarname}">
+				<manifest>
+					<attribute name="Main-Class" value="${ums.mobileutil.boot.manifest.mainclass}" />
+				</manifest>
+
+				<fileset dir="${ums.mobileutil.workspace}/build/classesboot">
+					<include name="**/*.class" />
+				</fileset>
+				<fileset dir="${ums.mobileutil.workspace}/build/classesboot">
+					<include name="**/.control" />
+				</fileset>
+		</jar>
+		
+		<javac debug="true" deprecation="true" destdir="${ums.mobileutil.workspace}/build/classes" srcdir="${ums.mobileutil.workspace}/src">
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.util.build.classpath" />						
+			<classpath refid="ums.mobileserver.build.classpath" />
+			<classpath refid="ums.mobileutil.build.classpath" />
+			<classpath refid="ums.mobileutil.lib.classpath" />
+			<classpath refid="ums.remotesupdates.serverapp.build.classpath" />
+		</javac>
+		
+		<jar jarfile="${ums.mobileutil.workspace}/build/${ums.mobileutil.jarname}">
+			<fileset dir="${ums.mobileutil.workspace}/build/classes">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${ums.mobileutil.workspace}/src">
+				<include name="**/.control" />
+			</fileset>
+		</jar>
+		
+		<delete dir="${ums.mobileutil.workspace}/build/classes" />
+		<delete dir="${ums.mobileutil.workspace}/build/classesboot" />
+	</target>
+
+	
+	
+	
+	
+	<target name="create-jar-ums-fomobile">
+			<mkdir dir="${ums.fomobile.workspace}/build/classes" />
+			<delete file="${ums.fomobile.workspace}/build/${ums.fomobile.jarname}" />
+			<javac debug="true" deprecation="true" destdir="${ums.fomobile.workspace}/build/classes" srcdir="${ums.fomobile.workspace}/src">
+				<classpath refid="ums.mobileutil.lib.classpath" />
+				<classpath refid="ums.util.build.classpath" />
+				<classpath refid="ums.mobileserver.build.classpath" />
+				<classpath refid="ums.remotesupdates.serverapp.build.classpath" />
+				<classpath refid="ums.mobileutil.build.classpath" />
+			</javac>
+			<jar jarfile="${ums.fomobile.workspace}/build/${ums.fomobile.jarname}">
+				<fileset dir="${ums.fomobile.workspace}/build/classes">
+					<include name="**/*.class" />
+				</fileset>
+				<fileset dir="${ums.fomobile.workspace}/src">
+					<include name="**/.control" />
+				</fileset>
+			</jar>
+			<delete dir="${ums.fomobile.workspace}/build/classes" />
+	</target>
+	
+	
+	<target name="create-jar-ums-womobile">
+				<mkdir dir="${ums.womobile.workspace}/build/classes" />
+				<delete file="${ums.womobile.workspace}/build/${ums.womobile.jarname}" />
+				<javac debug="true" deprecation="true" destdir="${ums.womobile.workspace}/build/classes" srcdir="${ums.womobile.workspace}/src">
+					<classpath refid="ums.mobileutil.lib.classpath" />
+					<classpath refid="ums.util.build.classpath" />
+					<classpath refid="ums.mobileserver.build.classpath" />
+					<classpath refid="ums.remotesupdates.serverapp.build.classpath" />
+					<classpath refid="ums.mobileutil.build.classpath" />
+				</javac>
+				<jar jarfile="${ums.womobile.workspace}/build/${ums.womobile.jarname}">
+					<fileset dir="${ums.womobile.workspace}/build/classes">
+						<include name="**/*.class" />
+					</fileset>
+					<fileset dir="${ums.womobile.workspace}/src">
+						<include name="**/.control" />
+					</fileset>
+				</jar>
+				<delete dir="${ums.womobile.workspace}/build/classes" />
+	</target>
+
+	
+	
+	<target name="Release_FOMobile" depends="create-jar-ums-util,create-jar-ums-mobileutil,create-jar-ums-fomobile">
+				<delete file="${ums.fomobile.release}/${ums.fomobile.version}/lib/${ums.util.jarname}" />
+				<delete file="${ums.fomobile.release}/${ums.fomobile.version}/lib/${ums.mobileutil.jarname}" />
+				<delete file="${ums.fomobile.release}/${ums.fomobile.version}/lib/${ums.mobileserver.jarname.interface}" />
+				<delete file="${ums.fomobile.release}/${ums.fomobile.version}/lib/${ums.remotesupdates.serverapp.jarname.interface}" />
+				<delete file="${ums.fomobile.release}/${ums.fomobile.version}/lib/${ums.fomobile.jarname}" />
+				<delete file="${ums.fomobile.release}/${ums.fomobile.version}/lib/${ums.mobileutil.boot.jarname}" />
+
+				<mkdir dir="${ums.fomobile.release}/${ums.fomobile.version}/lib" />
+				<mkdir dir="${ums.fomobile.release}/${ums.fomobile.version}/properties" />
+				<copy todir="${ums.fomobile.release}/${ums.fomobile.version}/lib">
+					<fileset dir="${ums.mobileserver.workspace}/build" defaultexcludes="true">
+						<include name="${ums.mobileserver.jarname.interface}" />
+					</fileset>
+					<fileset dir="${ums.remoteupdates.server.workspace}/build" defaultexcludes="true">
+						<include name="${ums.remotesupdates.serverapp.jarname.interface}" />
+					</fileset>
+					<fileset dir="${ums.util.workspace}/build" defaultexcludes="true">
+						<include name="${ums.util.jarname}" />
+					</fileset>
+					<fileset dir="${ums.mobileutil.workspace}/build" defaultexcludes="true">
+						<include name="${ums.mobileutil.jarname}" />
+						<include name="${ums.mobileutil.boot.jarname}" />
+					</fileset>
+					<fileset dir="${ums.fomobile.workspace}/build" defaultexcludes="true">
+						<include name="${ums.fomobile.jarname}" />
+					</fileset>			
+				</copy>			
+	</target>
+	
+	<target name="Release_WOMobile" depends="create-jar-ums-util,create-jar-ums-mobileutil,create-jar-ums-womobile">
+					<delete file="${ums.womobile.release}/${ums.womobile.version}/lib/${ums.util.jarname}" />
+					<delete file="${ums.womobile.release}/${ums.womobile.version}/lib/${ums.mobileutil.jarname}" />
+					<delete file="${ums.womobile.release}/${ums.womobile.version}/lib/${ums.mobileserver.jarname.interface}" />
+					<delete file="${ums.womobile.release}/${ums.womobile.version}/lib/${ums.remotesupdates.serverapp.jarname.interface}" />
+					<delete file="${ums.womobile.release}/${ums.womobile.version}/lib/${ums.womobile.jarname}" />
+					<delete file="${ums.womobile.release}/${ums.womobile.version}/lib/${ums.mobileutil.boot.jarname}" />
+
+					<mkdir dir="${ums.womobile.release}/${ums.womobile.version}/lib" />
+					<mkdir dir="${ums.womobile.release}/${ums.womobile.version}/properties" />
+					<copy todir="${ums.womobile.release}/${ums.womobile.version}/lib">
+						<fileset dir="${ums.mobileserver.workspace}/build" defaultexcludes="true">
+							<include name="${ums.mobileserver.jarname.interface}" />
+						</fileset>
+						<fileset dir="${ums.remoteupdates.server.workspace}/build" defaultexcludes="true">
+							<include name="${ums.remotesupdates.serverapp.jarname.interface}" />
+						</fileset>
+						<fileset dir="${ums.util.workspace}/build" defaultexcludes="true">
+							<include name="${ums.util.jarname}" />
+						</fileset>
+						<fileset dir="${ums.mobileutil.workspace}/build" defaultexcludes="true">
+							<include name="${ums.mobileutil.jarname}" />
+							<include name="${ums.mobileutil.boot.jarname}" />
+						</fileset>
+						<fileset dir="${ums.womobile.workspace}/build" defaultexcludes="true">
+							<include name="${ums.womobile.jarname}" />
+						</fileset>			
+					</copy>			
+	</target>		
+
+	<target name="create-jar-ums-stager" depends="create-jar-ums-util">
+
+		<delete includeemptydirs="true">
+			<fileset dir="${ums.stager.workspace}/build" includes="**/*" />
+		</delete>
+
+		<!-- All Jobs-->
+		<mkdir dir="${ums.stager.workspace}/build/classes/srcCommons" />
+		<mkdir dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCEMDECS2UMSCOPY.srcdir}" />
+		<mkdir dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCLOADDATAFROMEMDECS.srcdir}" />
+		<mkdir dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSCREATEXML.srcdir}" />
+		<mkdir dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.srcdir}" />		
+		<mkdir dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCRTMIFTPTOTCL.srcdir}" />
+		<mkdir dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSSENDEMAIL.srcdir}" />
+		<mkdir dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSSCHEDULETRIGGER.srcdir}" />
+		<mkdir dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSRESERVATION.srcdir}" />
+		<mkdir dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSFTPREPORTUPLOAD.srcdir}" />
+		<mkdir dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSGEOFENCEMONITOR.srcdir}" />
+		<mkdir dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCWOSEND2EMDECS.srcdir}" />
+		<mkdir dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSSTATEMENTSCHEDULES.srcdir}" />
+		
+
+		<javac debug="false" deprecation="true" destdir="${ums.stager.workspace}/build/classes/srcCommons" srcdir="${ums.stager.workspace}/srcCommons">
+			<classpath refid="ums.util.build.classpath" />
+			<classpath refid="ums.util.lib.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.stager.workspace}/build/${ums.stager.jarname}">
+			<fileset dir="${ums.stager.workspace}/build/classes/srcCommons">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${ums.stager.workspace}/srcCommons">
+				<include name="**/.control" />
+			</fileset>
+		</jar>
+
+
+		<!-- Jobs TCEMDECS2UMSCOPY-->
+		<javac debug="true" deprecation="true" destdir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCEMDECS2UMSCOPY.srcdir}" srcdir="${ums.stager.workspace}/${ums.stager.jobs.TCEMDECS2UMSCOPY.srcdir}">
+			<classpath refid="ums.util.build.classpath" />
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.stager.build.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.stager.workspace}/build/${ums.stager.jobs.TCEMDECS2UMSCOPY.jarname}">
+			<fileset dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCEMDECS2UMSCOPY.srcdir}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+
+
+		<!-- Jobs TCLOADDATAFROMEMDECS-->
+		<javac debug="true" deprecation="true" destdir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCLOADDATAFROMEMDECS.srcdir}" srcdir="${ums.stager.workspace}/${ums.stager.jobs.TCLOADDATAFROMEMDECS.srcdir}">
+			<classpath refid="ums.util.build.classpath" />
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.stager.build.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.stager.workspace}/build/${ums.stager.jobs.TCLOADDATAFROMEMDECS.jarname}">
+			<fileset dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCLOADDATAFROMEMDECS.srcdir}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+
+
+		<!-- Jobs UMSCREATEXML-->
+		<javac debug="true" deprecation="true" destdir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSCREATEXML.srcdir}" srcdir="${ums.stager.workspace}/${ums.stager.jobs.UMSCREATEXML.srcdir}">
+			<classpath refid="ums.util.build.classpath" />
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.stager.build.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.stager.workspace}/build/${ums.stager.jobs.UMSCREATEXML.jarname}">
+			<fileset dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSCREATEXML.srcdir}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+
+		<!-- Jobs TCRTMISYNCEMDECSANDUMS-->
+		<javac debug="true" deprecation="true" destdir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.srcdir}" srcdir="${ums.stager.workspace}/${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.srcdir}">
+			<classpath refid="ums.util.build.classpath" />
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.stager.build.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.stager.workspace}/build/${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.jarname}">
+			<fileset dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.srcdir}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+
+		
+		<!-- Jobs TCRTMIFTPTOTCL-->
+		<javac debug="true" deprecation="true" destdir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCRTMIFTPTOTCL.srcdir}" srcdir="${ums.stager.workspace}/${ums.stager.jobs.TCRTMIFTPTOTCL.srcdir}">
+			<classpath refid="ums.util.build.classpath" />
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.stager.build.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.stager.workspace}/build/${ums.stager.jobs.TCRTMIFTPTOTCL.jarname}">
+			<fileset dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCRTMIFTPTOTCL.srcdir}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+		
+		
+		<!-- Jobs UMSSCHEDULETRIGGER-->
+		<javac debug="true" deprecation="true" destdir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSSCHEDULETRIGGER.srcdir}" srcdir="${ums.stager.workspace}/${ums.stager.jobs.UMSSCHEDULETRIGGER.srcdir}">
+			<classpath refid="ums.util.build.classpath" />
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.stager.build.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.stager.workspace}/build/${ums.stager.jobs.UMSSCHEDULETRIGGER.jarname}">
+			<fileset dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSSCHEDULETRIGGER.srcdir}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+		
+		
+		<!-- Jobs UMSSENDEMAIL-->
+		<javac debug="true" deprecation="true" destdir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSSENDEMAIL.srcdir}" srcdir="${ums.stager.workspace}/${ums.stager.jobs.UMSSENDEMAIL.srcdir}">
+			<classpath refid="ums.util.build.classpath" />
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.stager.build.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.stager.workspace}/build/${ums.stager.jobs.UMSSENDEMAIL.jarname}">
+			<fileset dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSSENDEMAIL.srcdir}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+		
+		
+		
+		<!-- Jobs UMSRESERVATION -->
+		<javac debug="true" deprecation="true" destdir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSRESERVATION.srcdir}" srcdir="${ums.stager.workspace}/${ums.stager.jobs.UMSRESERVATION.srcdir}">
+			<classpath refid="ums.util.build.classpath" />
+			<classpath refid="ums.util.lib.classpath" />
+			<classpath refid="ums.stager.build.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.stager.workspace}/build/${ums.stager.jobs.UMSRESERVATION.jarname}">
+			<fileset dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSRESERVATION.srcdir}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+		
+		<!-- Jobs UMSFTPREPORTUPLOAD -->
+		<javac debug="true" deprecation="true" destdir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSFTPREPORTUPLOAD.srcdir}" srcdir="${ums.stager.workspace}/${ums.stager.jobs.UMSFTPREPORTUPLOAD.srcdir}">
+				<classpath refid="ums.util.build.classpath" />
+				<classpath refid="ums.util.lib.classpath" />
+				<classpath refid="ums.stager.build.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.stager.workspace}/build/${ums.stager.jobs.UMSFTPREPORTUPLOAD.jarname}">
+				<fileset dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSFTPREPORTUPLOAD.srcdir}">
+					<include name="**/*.class" />
+				</fileset>
+		</jar>
+		
+		
+		<!-- Jobs UMSGEOFENCEMONITOR -->
+		<javac debug="true" deprecation="true" destdir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSGEOFENCEMONITOR.srcdir}" srcdir="${ums.stager.workspace}/${ums.stager.jobs.UMSGEOFENCEMONITOR.srcdir}">
+				<classpath refid="ums.util.build.classpath" />
+				<classpath refid="ums.util.lib.classpath" />
+				<classpath refid="ums.stager.build.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.stager.workspace}/build/${ums.stager.jobs.UMSGEOFENCEMONITOR.jarname}">
+				<fileset dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSGEOFENCEMONITOR.srcdir}">
+					<include name="**/*.class" />
+				</fileset>
+		</jar>
+		
+		
+		<!-- Jobs TCWOSEND2EMDECS -->
+		<javac debug="true" deprecation="true" destdir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCWOSEND2EMDECS.srcdir}" srcdir="${ums.stager.workspace}/${ums.stager.jobs.TCWOSEND2EMDECS.srcdir}">
+				<classpath refid="ums.util.build.classpath" />
+				<classpath refid="ums.util.lib.classpath" />
+				<classpath refid="ums.stager.build.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.stager.workspace}/build/${ums.stager.jobs.TCWOSEND2EMDECS.jarname}">
+				<fileset dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.TCWOSEND2EMDECS.srcdir}">
+					<include name="**/*.class" />
+				</fileset>
+		</jar>
+		
+		
+		<!-- Jobs UMSSTATEMENTSCHEDULES -->
+		<javac debug="true" deprecation="true" destdir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSSTATEMENTSCHEDULES.srcdir}" srcdir="${ums.stager.workspace}/${ums.stager.jobs.UMSSTATEMENTSCHEDULES.srcdir}">
+				<classpath refid="ums.util.build.classpath" />
+				<classpath refid="ums.util.lib.classpath" />
+				<classpath refid="ums.stager.build.classpath" />
+		</javac>
+
+		<jar jarfile="${ums.stager.workspace}/build/${ums.stager.jobs.UMSSTATEMENTSCHEDULES.jarname}">
+				<fileset dir="${ums.stager.workspace}/build/classes/${ums.stager.jobs.UMSSTATEMENTSCHEDULES.srcdir}">
+					<include name="**/*.class" />
+				</fileset>
+		</jar>
+		
+		
+		
+	</target>
+
+	<target name="Release_Stager" depends="create-jar-ums-stager">
+
+		<delete includeemptydirs="true">
+			<fileset dir="${ums.stager.release}/${ums.stager.version}/lib" includes="**/*" />
+		</delete>
+		<delete includeemptydirs="true">
+			<fileset dir="${ums.stager.release}/${ums.stager.version}/jobs" includes="**/*" />
+		</delete>
+		<delete includeemptydirs="true">
+			<fileset dir="${ums.stager.release}/${ums.stager.version}/properties" includes="**/*" />
+		</delete>
+
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/lib" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/properties" />
+
+
+		<copy todir="${ums.stager.release}/${ums.stager.version}/lib">
+			<fileset dir="${ums.util.workspace}/build" defaultexcludes="true">
+				<include name="${ums.util.jarname}" />
+			</fileset>
+			<fileset dir="${ums.stager.workspace}/build" defaultexcludes="true">
+				<include name="${ums.stager.jarname}" />
+			</fileset>
+		</copy>
+
+		<copy todir="${ums.stager.release}/${ums.stager.version}/properties">
+			<fileset dir="${ums.stager.workspace}/properties" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+
+
+		<!-- Jobs -->
+		
+		<!-- Jobs TCEMDECS2UMSCOPY-->
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCEMDECS2UMSCOPY.name}/logs" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCEMDECS2UMSCOPY.name}/lib" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCEMDECS2UMSCOPY.name}/properties" />
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCEMDECS2UMSCOPY.name}/lib">
+			<fileset dir="${ums.stager.workspace}/build" defaultexcludes="true">
+				<include name="${ums.stager.jobs.TCEMDECS2UMSCOPY.jarname}" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCEMDECS2UMSCOPY.name}/properties">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.TCEMDECS2UMSCOPY.name}/properties" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCEMDECS2UMSCOPY.name}/lib">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.TCEMDECS2UMSCOPY.name}/lib" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+
+
+
+		<!-- Jobs TCLOADDATAFROMEMDECS-->
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCLOADDATAFROMEMDECS.name}/logs" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCLOADDATAFROMEMDECS.name}/lib" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCLOADDATAFROMEMDECS.name}/properties" />
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCLOADDATAFROMEMDECS.name}/lib">
+			<fileset dir="${ums.stager.workspace}/build" defaultexcludes="true">
+				<include name="${ums.stager.jobs.TCLOADDATAFROMEMDECS.jarname}" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCLOADDATAFROMEMDECS.name}/properties">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.TCLOADDATAFROMEMDECS.name}/properties" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCEMDECS2UMSCOPY.name}/lib">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.TCEMDECS2UMSCOPY.name}/lib" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+
+		<!-- Jobs UMSCREATEXML-->
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSCREATEXML.name}/logs" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSCREATEXML.name}/lib" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSCREATEXML.name}/properties" />
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSCREATEXML.name}/lib">
+			<fileset dir="${ums.stager.workspace}/build" defaultexcludes="true">
+				<include name="${ums.stager.jobs.UMSCREATEXML.jarname}" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSCREATEXML.name}/properties">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSCREATEXML.name}/properties" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSCREATEXML.name}/lib">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSCREATEXML.name}/lib" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+
+
+		
+		<!-- Jobs TCRTMISYNCEMDECSANDUMS-->
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.name}/logs" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.name}/lib" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.name}/properties" />
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.name}/lib">
+			<fileset dir="${ums.stager.workspace}/build" defaultexcludes="true">
+				<include name="${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.jarname}" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.name}/properties">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.name}/properties" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.name}/lib">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.TCRTMISYNCEMDECSANDUMS.name}/lib" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+
+	
+		
+		
+		<!-- Jobs TCRTMIFTPTOTCL-->
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCRTMIFTPTOTCL.name}/logs" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCRTMIFTPTOTCL.name}/lib" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCRTMIFTPTOTCL.name}/properties" />
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCRTMIFTPTOTCL.name}/lib">
+			<fileset dir="${ums.stager.workspace}/build" defaultexcludes="true">
+				<include name="${ums.stager.jobs.TCRTMIFTPTOTCL.jarname}" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCRTMIFTPTOTCL.name}/properties">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.TCRTMIFTPTOTCL.name}/properties" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCRTMIFTPTOTCL.name}/lib">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.TCRTMIFTPTOTCL.name}/lib" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		
+		
+		
+		
+		<!-- Jobs UMSSENDEMAIL-->
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSENDEMAIL.name}/logs" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSENDEMAIL.name}/lib" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSENDEMAIL.name}/properties" />
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSENDEMAIL.name}/lib">
+			<fileset dir="${ums.stager.workspace}/build" defaultexcludes="true">
+				<include name="${ums.stager.jobs.UMSSENDEMAIL.jarname}" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSENDEMAIL.name}/properties">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSSENDEMAIL.name}/properties" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSENDEMAIL.name}/lib">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSSENDEMAIL.name}/lib" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		
+		<!-- Jobs UMSSCHEDULETRIGGER-->
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSCHEDULETRIGGER.name}/logs" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSCHEDULETRIGGER.name}/lib" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSCHEDULETRIGGER.name}/properties" />
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSCHEDULETRIGGER.name}/lib">
+			<fileset dir="${ums.stager.workspace}/build" defaultexcludes="true">
+				<include name="${ums.stager.jobs.UMSSCHEDULETRIGGER.jarname}" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSCHEDULETRIGGER.name}/properties">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSSCHEDULETRIGGER.name}/properties" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSCHEDULETRIGGER.name}/lib">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSSCHEDULETRIGGER.name}/lib" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		
+		<!-- Jobs UMSRESERVATION-->
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSRESERVATION.name}/logs" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSRESERVATION.name}/lib" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSRESERVATION.name}/properties" />
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSRESERVATION.name}/lib">
+			<fileset dir="${ums.stager.workspace}/build" defaultexcludes="true">
+				<include name="${ums.stager.jobs.UMSRESERVATION.jarname}" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSRESERVATION.name}/properties">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSRESERVATION.name}/properties" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSRESERVATION.name}/lib">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSRESERVATION.name}/lib" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		
+		<!-- Jobs UMSFTPREPORTUPLOAD -->
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSFTPREPORTUPLOAD.name}/logs" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSFTPREPORTUPLOAD.name}/lib" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSFTPREPORTUPLOAD.name}/properties" />
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSFTPREPORTUPLOAD.name}/lib">
+			<fileset dir="${ums.stager.workspace}/build" defaultexcludes="true">
+				<include name="${ums.stager.jobs.UMSFTPREPORTUPLOAD.jarname}" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSFTPREPORTUPLOAD.name}/properties">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSFTPREPORTUPLOAD.name}/properties" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSFTPREPORTUPLOAD.name}/lib">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSFTPREPORTUPLOAD.name}/lib" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+
+		
+		
+		<!-- Jobs UMSGEOFENCEMONITOR -->
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSGEOFENCEMONITOR.name}/logs" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSGEOFENCEMONITOR.name}/lib" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSGEOFENCEMONITOR.name}/properties" />
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSGEOFENCEMONITOR.name}/lib">
+			<fileset dir="${ums.stager.workspace}/build" defaultexcludes="true">
+				<include name="${ums.stager.jobs.UMSGEOFENCEMONITOR.jarname}" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSGEOFENCEMONITOR.name}/properties">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSGEOFENCEMONITOR.name}/properties" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSGEOFENCEMONITOR.name}/lib">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSGEOFENCEMONITOR.name}/lib" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+						
+		
+		<!-- Jobs TCWOSEND2EMDECS -->
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCWOSEND2EMDECS.name}/logs" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCWOSEND2EMDECS.name}/lib" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCWOSEND2EMDECS.name}/properties" />
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCWOSEND2EMDECS.name}/lib">
+			<fileset dir="${ums.stager.workspace}/build" defaultexcludes="true">
+				<include name="${ums.stager.jobs.TCWOSEND2EMDECS.jarname}" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCWOSEND2EMDECS.name}/properties">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.TCWOSEND2EMDECS.name}/properties" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.TCWOSEND2EMDECS.name}/lib">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.TCWOSEND2EMDECS.name}/lib" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		
+		<!-- Jobs UMSSTATEMENTSCHEDULES -->
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSTATEMENTSCHEDULES.name}/logs" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSTATEMENTSCHEDULES.name}/lib" />
+		<mkdir dir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSTATEMENTSCHEDULES.name}/properties" />
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSTATEMENTSCHEDULES.name}/lib">
+			<fileset dir="${ums.stager.workspace}/build" defaultexcludes="true">
+				<include name="${ums.stager.jobs.UMSSTATEMENTSCHEDULES.jarname}" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSTATEMENTSCHEDULES.name}/properties">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSSTATEMENTSCHEDULES.name}/properties" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${ums.stager.release}/${ums.stager.version}/jobs/${ums.stager.jobs.UMSSTATEMENTSCHEDULES.name}/lib">
+			<fileset dir="${ums.stager.workspace}/jobs/${ums.stager.jobs.UMSSTATEMENTSCHEDULES.name}/lib" defaultexcludes="true">
+				<include name="*.*" />
+			</fileset>
+		</copy>
+		
+				
+		
+		<delete includeemptydirs="true">
+			<fileset dir="${ums.stager.workspace}/build" includes="**/*" />
+		</delete>
+
+	</target>
+</project>

@@ -1,0 +1,61 @@
+010003.09: (08/08/2009 10:40 GMT-3)
+  Improvement: Removed the part send e-mail, now 'UMSSENDEMAIL' send all e-mails
+  
+  Released: 
+   		DEV : (02/25/2010 20:15 GMT-3)
+   		PROD: (03/03/2010 22:30 GMT-3)
+  
+010003.08: (08/08/2009 10:40 GMT-3)
+  Changed: Added 'barcode' element in XML
+  
+010003.07: (07/10/2009 18:30 GMT-5)
+   Problem: Try to move a unit from yard A to B, then go to yard B. You will not see the unit there... until the stager changes the status to COMPLETED. Then user will need to refresh the yard in order to see the unit on the top left corner.
+			Another test, on the same yard, move unit 1 from pad A to pad B, then to pad C... and quickly do a yard refresh... you will see that all 3 pads will be marked with XXXXXX, and the unit will not show. It will only show when the stager changed the status to COMPLETED.
+			We need to think and see how we can solve this, without interfering on performance and not causing other side effects.
+   
+   Fixed: The SQL that is causing some problems was removed: "..yys.shusta_id != 7.." 
+
+
+010003.06: (06/05/2009 18:15 GMT-5)
+   Fixed: Stager query wasn't retrieving the Shunt Order. The Shunt order isn't was being closed
+SELECT   *,
+         statuses_yard.code code_from_yarsta_id
+FROM     ym_yard_shunts yys
+         INNER JOIN ym_units yunits
+         ON       yys.uni_id = yunits.uni_id
+         INNER JOIN ym_shunt_statuses statuses
+         ON       yys.shusta_id = statuses.shusta_id
+         LEFT JOIN ym_yard_map_moves moves
+         ON       yunits.uni_id = moves.uni_id
+         LEFT JOIN ym_yard_statuses statuses_yard
+         ON       moves.yarsta_id                    = statuses_yard.yarsta_id
+WHERE    get_parent_from_cus_id(yunits.cus_id_owner) = 4
+     AND yys.shusta_id                              != 7
+         /*COMPLETED*/
+     AND (
+                  yys.xml_export_flag = 'Y'
+               OR (
+                           yys.shusta_id = 2
+                           /*'TRANSFERTOMOBILEWAITING'*/
+                       AND yys.void_flag = 'Y'
+                  )
+               OR yys.shusta_id = 6
+                  /*'TRANSFERTOSERVERCOMPLETED'*/
+         )
+ORDER BY yys.dropoff_timestamp;
+
+
+
+010003.05: (03/31/2009 17:50 GMT-5)
+   Improvement: Created a new Structure for the Stager, now each job added on the sys_job_controls  will run as part of the stager mechanism and will be run independent of the other job.
+   
+010003.04: (03/04/2009 20:05 GMT-5)
+   Improvement: Improvement of the slow SQL query
+   
+010003.03: (03/03/2009 21:15 GMT-5)
+   Fixed:       Added some checking to prevent a job cause a lock 
+   Improvement: Added timeout to prevent that a job cause a lock
+   
+010003.02: (02/14/2009 11:45 GMT-5)
+   Fixed:  Added a message (ums.exceptions.NotConnectionServer: Do not exists param :error.server.notexists in 'messages.properies')
+   Fixed:  The Stager was stopping sometimes

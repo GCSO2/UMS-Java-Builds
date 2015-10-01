@@ -1,0 +1,8 @@
+010003.03: (05/01/2009 15:35 CNT)
+   Bug fixed: Added #BEGIN# and #END# in 'sourceQuery' between begin and end of columns. Was happening erros in  inner selects 
+
+010003.02: (04/14/2009 17:55 CNT)
+   Bug fixed: Column name with keywords of Mysql. Added '$' character in front all columns.
+   
+010003.01: (03/31/2009 17:50 CNT)
+   New: Created new Job that will run as part of the stager mechanism and will be taking data from one database and loading in another database.  
